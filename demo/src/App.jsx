@@ -37,8 +37,7 @@ class App extends Component {
   }
 
   componentDidMount() {
-    this.getRepos('react', '', 5, 100, true);
-    this.getRepos('react', '', 5, 100, false);
+    this.getRepos('react', '', 5, 100);
   }
 
   getRepos(terms, language, stars, num) {
