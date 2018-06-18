@@ -1,10 +1,8 @@
 import React, { Component } from 'react';
 import GitBox from "./GitBox.jsx";
 import QueryTimer from './QueryTimer.jsx';
-import Flache from '../flache';
 import gql from 'graphql-tag';
-
-// import Flache from 'flacheql';
+import Flache from 'flacheql';
 
 class App extends Component {
   constructor(props) {
@@ -34,10 +32,13 @@ class App extends Component {
     this.endTimer = this.endTimer.bind(this);
     this.flashTimer = this.flashTimer.bind(this);
     this.apolloClient = this.props.client;
+    this.hermesClient = this.props.clientH;
   }
 
   componentDidMount() {
-    this.getRepos('react', '', 5, 100);
+    this.getRepos('react', 'javascript', 5, 100);
+    setTimeout(() => this.getRepos('graphql', 'javascript', 5, 100), 3000)
+    setTimeout(() => this.getRepos('react', 'javascript', 5, 100), 6000)
   }
 
   getRepos(terms, language, stars, num) {
@@ -50,18 +51,61 @@ class App extends Component {
       num,
     }
     const flacheQuery = this.buildQuery(terms, language, stars, num, true);
-    const apolloQuery = this.buildQuery(terms, language, stars, num, false);
-    // start flache timer
+   
+    // fetch data from github API
+    // const fetchData = (query, endpoint, headers) => {
+    //   return new Promise((resolve, reject) => {
+    //     fetch(endpoint, {
+    //         method: 'POST',
+    //         headers,
+    //         body: JSON.stringify({
+    //             query,
+    //         }),
+    //     })
+    //     .then((res) => res.json())
+    //     .then((res) => {
+    //         resolve(res);
+    //     })
+    //     .catch(err => err)
+    //   })
+    // }
+    
+    // fetchData(flacheQuery, endpoint, headers)
+    // .then(res => this.handleResponse(res.data, true));
+
     this.startTimer(true, num);
-    // launch flache query
+   
+    // // launch flacheql query
     this.cache.it(flacheQuery, variables, endpoint, headers)
-      .then(res => {
-        this.handleResponse(res.data, true)
-      });
-    // start apollo timer
+              .then(res => this.handleResponse(res.data, true));
+    
+    
+    
+    
+    
+    
+    
+    
+
+
+
+
+
+
+    const apolloQuery = this.buildQuery(terms, language, stars, num, false);
+      
+    // // start apollo timer
     this.startTimer(false, num);
-    // launch apollo query
-    this.apolloClient.query({ query: apolloQuery }).then(res => this.handleResponse(res.data, false));
+    // // launch apollo query
+    this.apolloClient.query({ query: apolloQuery }).then(res => {
+      console.log(this.apolloClient.cache)
+      this.handleResponse(res.data, false);
+    });
+    
+    // this.hermesClient.query({ query: apolloQuery }).then(res => {
+    //   console.log(this.hermesClient.cache)
+    //   this.handleResponse(res.data, false);
+    // });
   }
 
   buildQuery(terms, language, stars, num, flache) {

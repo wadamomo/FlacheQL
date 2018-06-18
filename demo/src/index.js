@@ -6,6 +6,7 @@ import { ApolloClient } from 'apollo-client';
 import { HttpLink } from 'apollo-link-http';
 import { setContext } from 'apollo-link-context';
 import { InMemoryCache } from 'apollo-cache-inmemory';
+import { Hermes } from 'apollo-cache-hermes';
 
 const httpLink = new HttpLink({uri: 'https://api.github.com/graphql' });
 
@@ -20,8 +21,13 @@ const client = new ApolloClient({
   cache: new InMemoryCache()
 });
 
+const clientH = new ApolloClient({
+  link,
+  cache: new Hermes()
+});
+
 ReactDOM.render(
-  <App client={client}/>,
+  <App client={client} clientH={clientH}/>,
   document.getElementById("content"),
 );
 
