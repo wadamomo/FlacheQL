@@ -32,6 +32,8 @@ const createCallbacksForPartialQueryValidation = (subsets) => {
           return num1 <= num2;
         };
         break;
+      default:
+        return 'null';
     }
     obj[subsetRule] = func;
     return obj;
